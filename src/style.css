@@ -1,0 +1,133 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*::selection {
+    background-color: transparent;
+}
+
+html {
+    font-size: 1vh;
+    color: white;
+    /* cursor: none; */
+}
+
+body {
+    background-color: #ebe6c5;
+    -webkit-overflow-scrolling: touch;
+    z-index: 1000000;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+@media (orientation:portrait) {
+    html {
+        font-size: 1.25vw;
+    }
+}
+@media (orientation:landscape) {
+    html {
+        font-size: 1.25vh;
+    }
+}
+
+.webgl
+{
+    position: fixed;
+    outline: none;
+    box-sizing: border-box;
+    z-index: 1000;
+    /* pointer-events: none; */
+}
+
+/* Slider */
+.slider {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    /* border: 2px solid blue; */
+}
+
+.blankSlider {
+    position: absolute;
+    z-index: 5000;
+    width: 100vw;
+    height: 800vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    background-color: transparent;
+}
+
+.sections {
+    width: 100vw;
+    height: 800vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.section {
+    width: 100vw;
+    height: 100vh;
+    padding: 2vw;
+}
+
+.mainText {
+    position: relative;
+    z-index: 3000;
+    text-shadow: -3px 3px 1px #ebe6c5, 3px 3px 1px #ebe6c5, -3px -3px 1px #ebe6c5, 3px -3px 1px #ebe6c5;
+}
+
+.commonName {
+    color: #704012;
+}
+
+.scientificName {
+    color: #704012;
+}
+
+.Vollkorn {
+    font-family: 'Vollkorn', serif;
+}
+
+.Squada {
+    font-family: 'Squada One', cursive;
+}
+
+.largeText {
+    font-size: 12.5rem;
+}
+
+.mediumText {
+    font-size: 4rem;
+}
+
+.navBar {
+    position: fixed;
+    top: 0.5vw;
+    left: 1vw;
+    width: calc(100vw - 2vw);
+    height: 5vh;
+    z-index: 4000;
+}
+
+.logo {
+    font-size: 3rem;
+    color: black;
+}
+/* #section1 {
+    background-color: #4a7337;
+}
+
+#section3 {
+    background-color: #6b8c21;
+} */
+
