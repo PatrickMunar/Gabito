@@ -787,12 +787,11 @@ const tick = () =>
     pm4material.uniforms.uTime.value = elapsedTime
     pm5material.uniforms.uTime.value = elapsedTime
     pm6material.uniforms.uTime.value = elapsedTime
+    pm7material.uniforms.uTime.value = elapsedTime
 
     // Camera Parallax
     const parallaxY = - mouse.y * 0.05 
     cameraGroup.position.y += ( parallaxY - cameraGroup.position.y )
-
-    // Mesh Parallax
 
     // Update controls
     if (controls.enabled == true) {

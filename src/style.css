@@ -77,12 +77,34 @@ body {
 .section {
     width: 100vw;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leftSection {
+    width: 60vw;
+    height: 100vh;
     padding: 2vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.rightSection {
+    width: 40vw;
+    height: 100vh;
+    padding: 2vw;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    flex-direction: column;
 }
 
 .mainText {
-    position: relative;
     z-index: 3000;
+    width: 100%;
     height: 25vh;
     text-shadow: -3px 3px 1px #ebe6c5, 3px 3px 1px #ebe6c5, -3px -3px 1px #ebe6c5, 3px -3px 1px #ebe6c5;
 }
@@ -114,29 +136,25 @@ body {
 .pictureClickDiv {
     position: relative;
     z-index: 6000;
-    top: calc(50vh - calc(9*2.9vw/2) - 2.25vw - 25vh);
-    left: calc(50vw - calc(16*2.9vw/2) - 2.25vw);
+    top: calc(50vh - calc(9*2.9vw/2) - 2.25vw - 15vh);
+    right: calc(calc(16*2.9vw/2) + 1.75vw);
     width: calc(16*2.9vw);
     height: calc(9*2.9vw);
     cursor: pointer;
 }
 
 .additionalText {
-    width: 25vw;
-    height: 60vh;
-    position: relative;
-    top: -50vh;
+    width: 100%;
+    height: 80vh;
     color: black;
     font-size: 3rem;
     font-family: 'Noto Sans', sans-serif;
 }
 
 .locationText {
-    width: 25vw;
-    height: 12.5vh;
-    position: relative;
-    top: -132.5vh;
-    right: -70vw;
+    width: 26vw;
+    height: 15vh;
+    padding-top: 5vh;
     color: black;
     font-size: 2rem;
     text-align: right;

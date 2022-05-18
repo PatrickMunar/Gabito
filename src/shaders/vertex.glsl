@@ -27,6 +27,7 @@ void main() {
     elevation += sin(modelPosition.z * uFrequency + uTime * uOscillationFrequency) * 0.1 * uAmplitude * uRotationX;
     elevation += sin(modelPosition.y * uFrequency + uTime * uOscillationFrequency) * 0.1 * uAmplitude;
     elevation += aCurvature;
+    // elevation += aRandom;
 
     modelPosition.z += elevation * uRotationZ;
     modelPosition.x += elevation * uRotationX;
