@@ -51,6 +51,8 @@ textures[1] = textureLoader.load('./images/2.jpg')
 textures[2] = textureLoader.load('./images/5.jpg')
 textures[3] = textureLoader.load('./images/9.jpg')
 textures[4] = textureLoader.load('./images/8.jpg')
+textures[5] = textureLoader.load('./images/3.jpg')
+const PHMapTexture = textureLoader.load('./images/philippines.svg')
 
 // Draco loader
 const dracoLoader = new DRACOLoader()
@@ -132,7 +134,6 @@ const waveDownAnimation = (y) => {
     }
     else {
         waveClickParameters.waveAmplitude = 0
-        noClicks = false
     }
     y.uniforms.uAmplitude.value = waveClickParameters.waveAmplitude
 }
@@ -158,10 +159,12 @@ scene.add(carouselGroup)
 const parameters = {
     widthFactor: 8,
     heightFactor: 8,
-    amplitudeFactor: 0.3,
-    speedFactor: 5,
+    amplitudeFactor: 0,
+    speedFactor: 0.75,
     wideWidthFactor: 16,
-    wideHeightFactor: 9
+    wideHeightFactor: 9,
+    mapWidthFactor: 515,
+    mapHeightFactor: 1045
 }
 
 const waveClickParameters = {
@@ -174,6 +177,8 @@ const planeSize = {
     height: 32*parameters.heightFactor,
     wideWidth: 32*parameters.wideWidthFactor,
     wideHeight: 32*parameters.wideHeightFactor,
+    mapWidth: 50*1.5,
+    mapHeight: 100*1.5,
 }
 
 // Picture Parameters
@@ -315,11 +320,98 @@ pictureMesh6.rotation.z = Math.PI * 8/180
 scene.add(pictureMesh6)
 carouselGroup.add(pictureMesh6)
 
+// Picture Parameters
+const pm7geometry = new THREE.PlaneGeometry(parameters.wideWidthFactor * 0.5, parameters.wideHeightFactor * 0.5, planeSize.wideWidth, planeSize.wideHeight)
+
+// Material
+const pm7material = new THREE.RawShaderMaterial({
+    vertexShader: testVertexShader,
+    fragmentShader: testFragmentShader,
+    uniforms: {
+        uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
+        uTime: {value: 0},
+        uOscillationFrequency: {value: 5},
+        uColor: {value: new THREE.Color('#aa00ff')},
+        uTexture: { value: textures[5] },
+        uAmplitude: {value: waveClickParameters.waveAmplitude},
+        uRotationX: {value: -1},
+        uRotationZ: {value: 0},
+    },
+    side: THREE.DoubleSide
+})
+
+// Picture Mesh 6
+let pictureMesh7= new THREE.Mesh(pm7geometry, pm7material)
+pictureMesh7.position.set(-5,-7.5,0)
+pictureMesh7.rotation.y = -Math.PI/2
+pictureMesh7.rotation.x = -Math.PI * 8/180
+scene.add(pictureMesh7)
+carouselGroup.add(pictureMesh7)
+
+// Picture Parameters
+const PHgeometry = new THREE.PlaneGeometry(parameters.mapWidthFactor * 0.05, parameters.mapHeightFactor * 0.05, planeSize.mapWidth, planeSize.mapHeight)
+const PHCount = PHgeometry.attributes.position.count
+const PHRandoms = new Float32Array(PHCount)
+
+const randomize = () => {
+    for (let i = 0; i < PHCount; i++) {
+        if ((i+1)%(planeSize.mapWidth + 1) == 0) {
+            PHRandoms[i] = (Math.random()) * parameters.amplitudeFactor * Math.random()
+        }
+        else {
+            PHRandoms[i] = PHRandoms[i+1]
+        } 
+    }  
+    
+    PHgeometry.setAttribute('aRandom', new THREE.BufferAttribute(PHRandoms, 1))
+}
+
+const runRandomize = () => {
+    randomize()
+    setTimeout(() => {
+        runRandomize()
+    }, 50/parameters.speedFactor)
+}
+
+runRandomize()
+
+// Material
+const PHmaterial = new THREE.RawShaderMaterial({
+    vertexShader: testVertexShader,
+    fragmentShader: testFragmentShader,
+    uniforms: {
+        uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
+        uTime: {value: 0},
+        uOscillationFrequency: {value: 5},
+        uColor: {value: new THREE.Color('#aa00ff')},
+        uTexture: { value: PHMapTexture },
+        uAmplitude: {value: waveClickParameters.waveAmplitude},
+        uRotationX: {value: 1},
+        uRotationZ: {value: 1},
+    },
+    side: THREE.DoubleSide,
+    // wireframe: true
+})
+
+// Picture Mesh 6
+let PHMap= new THREE.Mesh(PHgeometry, PHmaterial)
+PHMap.position.set(10,-2.5,-30)
+scene.add(PHMap)
+
 // Arrays
-const pictureMaterials = [pm2material, pm3material, pm4material, pm5material, pm6material]
-const pictureGeometries = [pm2geometry, pm3geometry, pm4geometry, pm5geometry, pm6geometry]
-const pictureMeshes = [pictureMesh2, pictureMesh3, pictureMesh4, pictureMesh5, pictureMesh6]
-const meshRotations = [pictureMesh2.rotation, pictureMesh3.rotation, pictureMesh4.rotation, pictureMesh5.rotation, pictureMesh6.rotation]
+const pictureMaterials = [pm2material, pm3material, pm4material, pm5material, pm6material, pm7material]
+const pictureGeometries = [pm2geometry, pm3geometry, pm4geometry, pm5geometry, pm6geometry, pm7geometry]
+const pictureMeshes = [pictureMesh2, pictureMesh3, pictureMesh4, pictureMesh5, pictureMesh6, pictureMesh7]
+const meshRotations = [pictureMesh2.rotation, pictureMesh3.rotation, pictureMesh4.rotation, pictureMesh5.rotation, pictureMesh6.rotation, pictureMesh7.rotation]
+const pictureCLickDivs = ['#pm2Click', '#pm3Click', '#pm4Click', '#pm5Click', '#pm6Click', '#pm7Click']
+
+// Converters
+const vhValue = (coef) => {
+    window.innerHeight*(coef/100)
+}
+const vwValue = (coef) => {
+    window.innerWidth*(coef/100)
+}
 
 // Curvature
 const curveMesh = (x) => {
@@ -352,6 +444,10 @@ const flattenMesh = (x) => {
     }  
     
     pictureGeometries[x].setAttribute('aCurvature', new THREE.BufferAttribute(curvature, 1))
+    gsap.to(pictureCLickDivs[x], {x:'14vw', y: '10vh', transform: 'rotateZ(0deg) scale(1.4)'})
+    gsap.to('.eyeIcon', {duration: 0.5, opacity: 0})
+    gsap.to('.exitIcon', {duration: 0.5, opacity: 1})
+    cursorState = 'EXIT'
 }
 
 // Straighten
@@ -405,6 +501,10 @@ const skewMesh = (x) => {
             gsap.to(pictureMeshes[x].position, {duration: 0.5, z: pictureMeshes[x].position.z + 2.25, y: pictureMeshes[x].position.y + 0.85})
         }
     } 
+    gsap.to(pictureCLickDivs[x], {x:'0vw', y: '0vh', transform: 'rotateZ(-8deg) scale(1)'})
+    gsap.to('.eyeIcon', {duration: 0.5, opacity: 1})
+    gsap.to('.exitIcon', {duration: 0.5, opacity: 0})
+    cursorState = 'EYES'
 }
 
 // Curve Calls
@@ -413,6 +513,7 @@ curveMesh(1)
 curveMesh(2)
 curveMesh(3)
 curveMesh(4)
+curveMesh(5)
 
 /**
  * Renderer
@@ -430,18 +531,23 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.toneMapping = THREE.CineonToneMapping
 
-// Raycaster
-const raycaster = new THREE.Raycaster()
-
 // Parallax Camera Group
 const cameraGroup = new THREE.Group
 cameraGroup.add(camera)
 cameraGroup.position.set(0,0,0)
 scene.add(cameraGroup)
+cameraGroup.add(PHMap)
 
 // Mouse
 const mouse = new THREE.Vector2()
 let cursorY = 0
+let adjustFactor = 25
+
+// Scroll
+const sectionDistance = 1.5
+
+let scrollX = 0
+let scrollY = 0
 
 window.addEventListener('mousemove', (event) =>
 {
@@ -449,12 +555,18 @@ window.addEventListener('mousemove', (event) =>
     mouse.y = - (event.clientY / sizes.height) * 2 + 1
 
     // Cursor Follower
-    cursorY = event.clientY - 10
-    // gsap.to('.cursorFollower', {x: event.clientX - 15, y: event.clientY - 15 + scrollY})
+    cursorY = event.clientY - 25
+    gsap.to('.cursorFollower', {x: event.clientX - adjustFactor, y: event.clientY - adjustFactor})
 })
 
+window.addEventListener('scroll', () => {
+    scrollY = window.scrollY
+    scrollX = window.scrollX
+    gsap.to('.cursorFollower', {y: cursorY})
+})
+
+
 // Raycasting Click
-let landingCurrentIntersect = null
 let noClicks = false
 let carouselRemoved = false
 
@@ -537,72 +649,123 @@ const addCarousel = (x) => {
     }
 }
 
-window.addEventListener('click', () => {
+gsap.to('.pictureClickDiv', {transform: 'rotateZ(-8deg)'})
+
+document.querySelector('#pm2Click').addEventListener('click', () => {
     if (noClicks == false) {
-        if (landingCurrentIntersect) {
-            if (landingCurrentIntersect.object == pictureMesh2) {
-                waveUpAnimation(pm2material)
-                if (carouselRemoved == false) {
-                    removeCarousel(0)
-                }
-                else {
-                    addCarousel(0)
-                }
-                noClicks = true
-            }
-            if (landingCurrentIntersect.object == pictureMesh3) {
-                waveUpAnimation(pm3material)
-                if (carouselRemoved == false) {
-                    removeCarousel(1)
-                }
-                else {
-                    addCarousel(1)
-                }
-                noClicks = true
-            }
-            if (landingCurrentIntersect.object == pictureMesh4) {
-                waveUpAnimation(pm4material)
-                if (carouselRemoved == false) {
-                    removeCarousel(2)
-                }
-                else {
-                    addCarousel(2)
-                }
-                noClicks = true
-            }
-            if (landingCurrentIntersect.object == pictureMesh5) {
-                waveUpAnimation(pm5material)
-                if (carouselRemoved == false) {
-                    removeCarousel(3)
-                }
-                else {
-                    addCarousel(3)
-                }
-                noClicks = true
-            }
-            if (landingCurrentIntersect.object == pictureMesh6) {
-                waveUpAnimation(pm6material)
-                if (carouselRemoved == false) {
-                    removeCarousel(4)
-                }
-                else {
-                    addCarousel(4)
-                }
-                noClicks = true
-            }
+        waveUpAnimation(pm2material)
+        if (carouselRemoved == false) {
+            removeCarousel(0)
         }
+        else {
+            addCarousel(0)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
     }
 })
 
-// Scroll
-const sectionDistance = 1.5
+document.querySelector('#pm3Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm3material)
+        if (carouselRemoved == false) {
+            removeCarousel(1)
+        }
+        else {
+            addCarousel(1)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
 
-let scrollX = 0
-let scrollY = 0
-window.addEventListener('scroll', () => {
-    scrollY = window.scrollY
-    scrollX = window.scrollX
-    // gsap.to('.cursorFollower', {y: cursorY + scrollY})
+document.querySelector('#pm4Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm4material)
+        if (carouselRemoved == false) {
+            removeCarousel(2)
+        }
+        else {
+            addCarousel(2)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
+
+document.querySelector('#pm5Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm5material)
+        if (carouselRemoved == false) {
+            removeCarousel(3)
+        }
+        else {
+            addCarousel(3)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
+
+document.querySelector('#pm6Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm6material)
+        if (carouselRemoved == false) {
+            removeCarousel(4)
+        }
+        else {
+            addCarousel(4)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
+
+document.querySelector('#pm7Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm7material)
+        if (carouselRemoved == false) {
+            removeCarousel(5)
+        }
+        else {
+            addCarousel(5)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
+
+// Cursor Animations
+let cursorState = 'EYES'
+document.querySelectorAll('.pictureClickDiv').forEach((e) => {
+    e.addEventListener(('mouseenter'), (f) => {
+        adjustFactor = 50
+        gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
+        if (cursorState == 'EYES') {
+            gsap.to('.eyeIcon', {duration: 0.5, opacity: 1})
+        }
+        else if (cursorState == 'EXIT') {
+            gsap.to('.exitIcon', {duration: 0.5, opacity: 1})
+        }
+    })
+    e.addEventListener(('mouseleave'), () => {
+        adjustFactor = 25
+        gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
+        gsap.to('.eyeIcon', {duration: 0.5, opacity: 0})
+        gsap.to('.exitIcon', {duration: 0.5, opacity: 0})
+    })
 })
 
 /**
@@ -631,34 +794,6 @@ const tick = () =>
 
     // Mesh Parallax
 
-    //Raycasting
-    raycaster.setFromCamera(mouse, camera)
-
-    const landingTestBox = [pictureMesh2, pictureMesh3, pictureMesh4, pictureMesh5, pictureMesh6]
-    const landingIntersects = raycaster.intersectObjects(landingTestBox)
-
-    if (landingIntersects.length) {
-        if(!landingCurrentIntersect)
-        {
-            canvas.style.cursor = 'pointer'
-            // gsap.to('.cursorFollower', {backgroundColor: 'rgba(219, 0, 0, 0.7)', opacity: 1})
-        }
-        if (landingCurrentIntersect === null) {
-            landingCurrentIntersect = landingIntersects[0]
-        }
-    }
-    else {
-        if(landingCurrentIntersect)
-        {
-            canvas.style.cursor = 'default'
-            // gsap.to('.cursorFollower', {backgroundColor: '#703f12d0', opacity: 0})
-        }
-        if (landingCurrentIntersect) {
-            landingCurrentIntersect = null
-        }
-        landingCurrentIntersect = null
-    }
-
     // Update controls
     if (controls.enabled == true) {
         controls.update()
@@ -668,12 +803,10 @@ const tick = () =>
     renderer.render(scene, camera)
 
     // Call tick again on the next frame
-    setTimeout(() => {
-        window.requestAnimationFrame(tick)
-      }, 1000 / 240)
-    // window.requestAnimationFrame(tick)
-
-    
+    // setTimeout(() => {
+    //     window.requestAnimationFrame(tick)
+    //   }, 1000 / 240)
+    window.requestAnimationFrame(tick)  
 }
 
 tick()
@@ -683,9 +816,6 @@ tick()
 // Scroll Triggers
 
 gsap.registerPlugin(ScrollTrigger)
-const vhValue = (coef) => {
-    window.innerHeight*(coef/100)
-}
 
 gsap.to(cameraGroup.rotation , {
     scrollTrigger: {
