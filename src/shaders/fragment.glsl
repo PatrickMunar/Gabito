@@ -11,5 +11,14 @@ void main() {
     // float lvElevation = vElevation * 5.0;
     // gl_FragColor = vec4(vRandom + uColor.r * lvElevation, uColor.g * lvElevation, uColor.b * lvElevation - vRandom, 1.0);
     vec4 textureColor = texture2D(uTexture, vUv);
+
+    // Negative
+    // textureColor.r = 1.0 - textureColor.r;
+    // textureColor.g = 1.0 - textureColor.g;
+    // textureColor.b = 1.0 - textureColor.b;
+
+    // uColor Filter
+    // textureColor.rgb *= uColor;
+
     gl_FragColor = textureColor;
 }

@@ -65,6 +65,7 @@ body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     background-color: transparent;
+    pointer-events: none;
 }
 
 .sections {
@@ -113,7 +114,7 @@ body {
 }
 
 .scientificName {
-    color: #704012;
+    color: #345028;
 }
 
 .Vollkorn {
@@ -196,6 +197,7 @@ body {
     box-shadow: -2px 2px 5px black;
     padding: 5px;
     border-radius: 5px;
+    pointer-events: auto;
 }
 
 .logo {
@@ -220,6 +222,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: default;
 }
 
 /* .currentPhase {
@@ -233,6 +236,16 @@ body {
     border: 1px solid black;
     border-radius: 2.5px;
     overflow: hidden;
+}
+
+.loadingBar {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    transform-origin: left;
 }
 
 /* .loadedBar {
@@ -256,7 +269,7 @@ body {
     background-color: #6a8c2150;
 }
 
-.eyeIcon, .exitIcon {
+.eyeIcon, .exitIcon, .enterIcon {
     color: #6b8c21;
     transform: scale(2.5);
     opacity: 0;
@@ -267,25 +280,32 @@ body {
 /* Scroll Bar */
 /* width */
 ::-webkit-scrollbar {
-    width: 10px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #6b8c21;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #345028;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #345028;
-  }
+width: 10px;
+}
 
-  .greetingsDiv {
-      width: 100vw;
-      height: 100vh;
-  }
+/* Track */
+::-webkit-scrollbar-track {
+background: #6b8c21;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+background: #345028;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+background: #345028;
+}
+
+.greetingsDiv {
+    width: 100vw;
+    height: 100vh;
+}
+
+.goodbyeDiv {
+    position: absolute;
+    top: 900vh;
+    width: 100vw;
+    height: 100vh;
+}

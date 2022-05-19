@@ -12,6 +12,7 @@ import flagVertexShader from './shaders/flagVertex.glsl'
 import seaFragmentShader from './shaders/seaFragment.glsl'
 import seaVertexShader from './shaders/seaVertex.glsl'
 import { Vector2 } from 'three'
+import ScrollToPlugin from "gsap/ScrollToPlugin";
 
 // Clear Scroll Memory
 window.history.scrollRestoration = 'manual'
@@ -59,6 +60,7 @@ textures[5] = textureLoader.load('./images/6.jpg')
 textures[6] = textureLoader.load('./images/3.jpg')
 textures[7] = textureLoader.load('./images/7.jpg')
 const PHMapTexture = textureLoader.load('./images/philippines.png')
+const leavesTexture = textureLoader.load('./images/leaf.svg')
 
 // Draco loader
 const dracoLoader = new DRACOLoader()
@@ -162,6 +164,7 @@ const waveUpAnimation = (x) => {
 
 // Mesh Carousel
 const carouselGroup = new THREE.Group
+carouselGroup.position.set(0,-11.5,0)
 scene.add(carouselGroup)
 
 // Picture Parameters
@@ -202,7 +205,7 @@ const pm2material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[0] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -230,7 +233,7 @@ const pm3material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[1] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: -1},
@@ -259,7 +262,7 @@ const pm4material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[2] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -288,7 +291,7 @@ const pm5material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[3] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 1},
@@ -317,7 +320,7 @@ const pm6material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[4] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -345,7 +348,7 @@ const pm7material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[5] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: -1},
@@ -374,7 +377,7 @@ const pm8material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[6] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -403,7 +406,7 @@ const pm9material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#ffffff')},
+        uColor: {value: new THREE.Color('#aa00ff')},
         uTexture: { value: textures[7] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 1},
@@ -446,7 +449,7 @@ const PHmaterial = new THREE.RawShaderMaterial({
 
 // PH Map
 let PHMap= new THREE.Mesh(PHgeometry, PHmaterial)
-PHMap.position.set(10,-2.5,-30)
+PHMap.position.set(10,-5,-30)
 scene.add(PHMap)
 
 // // Sea
@@ -655,6 +658,77 @@ scene.add(cameraGroup)
 cameraGroup.add(PHMap)
 // cameraGroup.add(seaMesh)
 
+// // Particles
+// const particlesCount = 1
+// const positions = new Float32Array(particlesCount * 3)
+
+// for (let i=0; i<particlesCount*3; i++) {
+//     // positions[i*3 + 0] = ( Math.random() - 0.5 ) * 20
+//     // positions[i*3 + 1] = ( Math.random() - 0.5 ) * 20 + ( Math.random() * 10 )
+//     // positions[i*3 + 2] = ( Math.random() - 0.5 ) * 20
+//     positions[i*3 + 0] = 0
+//     positions[i*3 + 1] = 0
+//     positions[i*3 + 2] = 0
+// }
+
+// const particlesGeometry = new THREE.BufferGeometry()
+// particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+
+// const particlesMaterial = new THREE.PointsMaterial({
+//     size: 1,
+//     sizeAttenuation: true,
+//     depthWrite: false,
+//     // blending: THREE.AdditiveBlending,
+//     map: leavesTexture,
+//     transparent: true
+// })
+
+// const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+// scene.add(particles)
+
+// Leaves 
+const leavesCount = 2000
+
+const leavesMaterial = new THREE.MeshBasicMaterial({
+    map: leavesTexture,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.SubtractiveBlending,
+    side: THREE.DoubleSide
+})
+
+const leavesGeometry = new THREE.PlaneGeometry(1,1)
+
+const leavesGroup = new THREE.Group
+const leaves = []
+let NorP = 1
+
+for (let i = 0; i < leavesCount; i++) {
+    const leaf = new THREE.Mesh(leavesGeometry, leavesMaterial)
+
+    NorP = Math.random()
+    if (NorP < 0.5) {
+        NorP = -1
+    }
+    else {
+        NorP = 1
+    }
+
+    NorP * Math.random() * 50
+    
+    const x = (Math.random() - 0.5)*40
+    const z = (400 - x*x)**0.5 * NorP
+    const y = (Math.random() - 0.5) * 50
+
+    leaf.position.set(x,y,z)
+    leaf.rotation.set(x,y,z)
+    leaves[i] = leaf
+    scene.add(leaf)
+    leavesGroup.add(leaf)
+}
+
+scene.add(leavesGroup)
+
 // Mouse
 const mouse = new THREE.Vector2()
 let cursorY = 0
@@ -714,6 +788,8 @@ var wheelOpt = supportsPassive ? { passive: false } : false;
 var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
 // call this to Disable
+let scrollDisabled = false
+
 function disableScroll() {
     document.body.style.overflow = 'hidden';
   window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
@@ -773,9 +849,13 @@ document.querySelector('#pm2Click').addEventListener('click', () => {
         waveUpAnimation(pm2material)
         if (carouselRemoved == false) {
             removeCarousel(0)
+            scrollDisabled = true
         }
         else {
             addCarousel(0)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -789,9 +869,13 @@ document.querySelector('#pm3Click').addEventListener('click', () => {
         waveUpAnimation(pm3material)
         if (carouselRemoved == false) {
             removeCarousel(1)
+            scrollDisabled = true
         }
         else {
             addCarousel(1)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -805,9 +889,13 @@ document.querySelector('#pm4Click').addEventListener('click', () => {
         waveUpAnimation(pm4material)
         if (carouselRemoved == false) {
             removeCarousel(2)
+            scrollDisabled = true
         }
         else {
             addCarousel(2)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -821,9 +909,13 @@ document.querySelector('#pm5Click').addEventListener('click', () => {
         waveUpAnimation(pm5material)
         if (carouselRemoved == false) {
             removeCarousel(3)
+            scrollDisabled = true
         }
         else {
             addCarousel(3)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -837,9 +929,13 @@ document.querySelector('#pm6Click').addEventListener('click', () => {
         waveUpAnimation(pm6material)
         if (carouselRemoved == false) {
             removeCarousel(4)
+            scrollDisabled = true
         }
         else {
             addCarousel(4)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -853,9 +949,13 @@ document.querySelector('#pm7Click').addEventListener('click', () => {
         waveUpAnimation(pm7material)
         if (carouselRemoved == false) {
             removeCarousel(5)
+            scrollDisabled = true
         }
         else {
             addCarousel(5)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -869,9 +969,13 @@ document.querySelector('#pm8Click').addEventListener('click', () => {
         waveUpAnimation(pm8material)
         if (carouselRemoved == false) {
             removeCarousel(6)
+            scrollDisabled = true
         }
         else {
             addCarousel(6)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -885,9 +989,13 @@ document.querySelector('#pm9Click').addEventListener('click', () => {
         waveUpAnimation(pm9material)
         if (carouselRemoved == false) {
             removeCarousel(7)
+            scrollDisabled = true
         }
         else {
             addCarousel(7)
+            setTimeout(() => {
+                scrollDisabled = false
+            }, 1250)
         }
         noClicks = true
         setTimeout(() => {
@@ -927,6 +1035,15 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const parallaxTime = elapsedTime
 
+    for (let i = 0; i < leaves.length; i++) {
+        leaves[i].rotation.z += Math.random()*0.01
+        leaves[i].rotation.y += Math.random()*0.01
+        leaves[i].rotation.x += Math.random()*0.01
+    }
+
+    leavesGroup.rotation.y = elapsedTime * 0.1
+    leavesGroup.position.y = - elapsedTime * 0.1
+
     // Camera Scroll
     camera.position.y = -scrollY / sizes.height * sectionDistance
 
@@ -964,21 +1081,24 @@ const tick = () =>
 tick()
 
 // Sets
-gsap.set(carouselGroup.position, {y: carouselGroup.position.y - 1.5 - 10})
+gsap.to(carouselGroup.position, {y: -11.5})
+gsap.set('.loadingBar', {transform:'scaleX(0)'})
 
 // Scroll Triggers
 
 gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollToPlugin)
 
 gsap.to(cameraGroup.rotation , {
     scrollTrigger: {
         trigger: '.sections',
         start: 'top top',
-        end: '100%',
-        snap: 1/8,
+        end: 'bottom bottom',
+        snap: 1/7,
         scrub: true,
+        // markers: true
     },
-    y: - Math.PI*4,
+    y: - Math.PI*3.5,
     ease: 'none',
 })
 
@@ -992,4 +1112,120 @@ gsap.to(carouselGroup.position , {
     },
     y: -1.5,
     ease: 'none',
+})
+
+gsap.fromTo(carouselGroup.position , {y: -1.5}, {
+    scrollTrigger: {
+        trigger: '.goodbyeDiv',
+        start: 'top bottom',
+        end: 'bottom bottom',
+        scrub: true,
+        snap: 1,
+        // markers: true
+    },
+    y: 10,
+    ease: 'none',
+})
+
+gsap.to('#loadingBar1' , {
+    scrollTrigger: {
+        trigger: '.greetingsDiv',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+        snap: 1,
+    },
+    transform: 'scaleX(1)',
+    ease: 'none',
+})
+
+gsap.to('#loadingBar2' , {
+    scrollTrigger: {
+        trigger: '.sections',
+        start: 'top top',
+        end: '100%',
+        snap: 1/8,
+        scrub: true,
+    },
+    transform: 'scaleX(1)',
+    ease: 'none',
+})
+
+// Nav Site State
+const greetingsNav = document.querySelector('#greetingsNav')
+greetingsNav.addEventListener('click', () => {
+    if (scrollDisabled == false) {
+        gsap.to(window, {duration: 1, scrollTo: 0})
+    }
+})
+
+greetingsNav.addEventListener(('mouseenter'), () => {
+    if (scrollDisabled == false) {
+        greetingsNav.style.cursor = 'pointer'
+        adjustFactor = 50
+        gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
+        gsap.to('.enterIcon', {duration: 0.5, opacity: 1})
+    }
+    else {
+        greetingsNav.style.cursor = 'default'
+    }
+})
+greetingsNav.addEventListener(('mouseleave'), () => {
+    if (scrollDisabled == false) {
+        adjustFactor = 25
+        gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
+        gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
+    }
+})
+
+const galleryNav = document.querySelector('#galleryNav')
+galleryNav.addEventListener('click', () => {
+    if (scrollDisabled == false) {
+        gsap.to(window, {duration: 1, scrollTo: window.innerHeight})
+    }
+})
+
+galleryNav.addEventListener(('mouseenter'), () => {
+    if (scrollDisabled == false) {
+        galleryNav.style.cursor = 'pointer'
+        adjustFactor = 50
+        gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
+        gsap.to('.enterIcon', {duration: 0.5, opacity: 1})
+    }
+    else {
+        galleryNav.style.cursor = 'default'
+    }
+})
+galleryNav.addEventListener(('mouseleave'), () => {
+    if (scrollDisabled == false) {
+        adjustFactor = 25
+        gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
+        gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
+    }
+})
+
+const goodbyeNav = document.querySelector('#goodbyeNav')
+goodbyeNav.addEventListener('click', () => {
+    if (scrollDisabled == false) {
+        gsap.to(window, {duration: 1, scrollTo: window.innerHeight*9})
+    }
+})
+
+goodbyeNav.addEventListener(('mouseenter'), () => {
+    if (scrollDisabled == false) {
+        goodbyeNav.style.cursor = 'pointer'
+        adjustFactor = 50
+        gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
+        gsap.to('.enterIcon', {duration: 0.5, opacity: 1})
+    }
+    else {
+        goodbyeNav.style.cursor = 'default'
+    }
+})
+goodbyeNav.addEventListener(('mouseleave'), () => {
+    if (scrollDisabled == false) {
+        adjustFactor = 25
+        gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
+        gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
+    }
 })
