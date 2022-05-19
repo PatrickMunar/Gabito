@@ -1042,7 +1042,6 @@ const tick = () =>
     }
 
     leavesGroup.rotation.y = elapsedTime * 0.1
-    leavesGroup.position.y = - elapsedTime * 0.1
 
     // Camera Scroll
     camera.position.y = -scrollY / sizes.height * sectionDistance
