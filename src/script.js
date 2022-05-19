@@ -7,7 +7,11 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import gsap from 'gsap'
 import testVertexShader from './shaders/vertex.glsl'
 import testFragmentShader from './shaders/fragment.glsl'
-import { Controller } from 'lil-gui'
+import flagFragmentShader from './shaders/flagFragment.glsl'
+import flagVertexShader from './shaders/flagVertex.glsl'
+import seaFragmentShader from './shaders/seaFragment.glsl'
+import seaVertexShader from './shaders/seaVertex.glsl'
+import { Vector2 } from 'three'
 
 // Clear Scroll Memory
 window.history.scrollRestoration = 'manual'
@@ -51,8 +55,10 @@ textures[1] = textureLoader.load('./images/2.jpg')
 textures[2] = textureLoader.load('./images/5.jpg')
 textures[3] = textureLoader.load('./images/9.jpg')
 textures[4] = textureLoader.load('./images/8.jpg')
-textures[5] = textureLoader.load('./images/3.jpg')
-const PHMapTexture = textureLoader.load('./images/philippines.svg')
+textures[5] = textureLoader.load('./images/6.jpg')
+textures[6] = textureLoader.load('./images/3.jpg')
+textures[7] = textureLoader.load('./images/7.jpg')
+const PHMapTexture = textureLoader.load('./images/philippines.png')
 
 // Draco loader
 const dracoLoader = new DRACOLoader()
@@ -109,6 +115,9 @@ window.addEventListener('resize', () => {
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    // seaMaterial.uniforms.uResolution.value.x = renderer.domElement.width;
+    // seaMaterial.uniforms.uResolution.value.y = renderer.domElement.height;
 })
 
 /**
@@ -159,7 +168,7 @@ scene.add(carouselGroup)
 const parameters = {
     widthFactor: 8,
     heightFactor: 8,
-    amplitudeFactor: 0,
+    amplitudeFactor: 1,
     speedFactor: 0.75,
     wideWidthFactor: 16,
     wideHeightFactor: 9,
@@ -177,8 +186,8 @@ const planeSize = {
     height: 32*parameters.heightFactor,
     wideWidth: 32*parameters.wideWidthFactor,
     wideHeight: 32*parameters.wideHeightFactor,
-    mapWidth: 50*1.5,
-    mapHeight: 100*1.5,
+    mapWidth: 50,
+    mapHeight: 100,
 }
 
 // Picture Parameters
@@ -193,7 +202,7 @@ const pm2material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
         uTexture: { value: textures[0] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -206,6 +215,7 @@ const pm2material = new THREE.RawShaderMaterial({
 let pictureMesh2 = new THREE.Mesh(pm2geometry, pm2material)
 pictureMesh2.position.set(0,0,5)
 pictureMesh2.rotation.z = Math.PI * 8/180
+pictureMesh2.frustumCulled = false
 scene.add(pictureMesh2)
 carouselGroup.add(pictureMesh2)
 
@@ -220,7 +230,7 @@ const pm3material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
         uTexture: { value: textures[1] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: -1},
@@ -234,6 +244,7 @@ let pictureMesh3 = new THREE.Mesh(pm3geometry, pm3material)
 pictureMesh3.position.set(-5,-1.5,0)
 pictureMesh3.rotation.y = -Math.PI/2
 pictureMesh3.rotation.x = -Math.PI * 8/180
+pictureMesh3.frustumCulled = false
 scene.add(pictureMesh3)
 carouselGroup.add(pictureMesh3)
 
@@ -248,7 +259,7 @@ const pm4material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
         uTexture: { value: textures[2] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -262,6 +273,7 @@ let pictureMesh4 = new THREE.Mesh(pm4geometry, pm4material)
 pictureMesh4.position.set(0,-3,-5)
 pictureMesh4.rotation.y = Math.PI
 pictureMesh4.rotation.z = Math.PI * 8/180
+pictureMesh4.frustumCulled = false
 scene.add(pictureMesh4)
 carouselGroup.add(pictureMesh4)
 
@@ -276,7 +288,7 @@ const pm5material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
         uTexture: { value: textures[3] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 1},
@@ -290,6 +302,7 @@ let pictureMesh5= new THREE.Mesh(pm5geometry, pm5material)
 pictureMesh5.position.set(5,-4.5,0)
 pictureMesh5.rotation.y = Math.PI/2
 pictureMesh5.rotation.x = Math.PI * 8/180
+pictureMesh5.frustumCulled = false
 scene.add(pictureMesh5)
 carouselGroup.add(pictureMesh5)
 
@@ -304,7 +317,7 @@ const pm6material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
         uTexture: { value: textures[4] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 0},
@@ -317,6 +330,7 @@ const pm6material = new THREE.RawShaderMaterial({
 let pictureMesh6= new THREE.Mesh(pm6geometry, pm6material)
 pictureMesh6.position.set(0,-6,5)
 pictureMesh6.rotation.z = Math.PI * 8/180
+pictureMesh6.frustumCulled = false
 scene.add(pictureMesh6)
 carouselGroup.add(pictureMesh6)
 
@@ -331,7 +345,7 @@ const pm7material = new THREE.RawShaderMaterial({
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
         uTexture: { value: textures[5] },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: -1},
@@ -340,70 +354,167 @@ const pm7material = new THREE.RawShaderMaterial({
     side: THREE.DoubleSide
 })
 
-// Picture Mesh 6
+// Picture Mesh 7
 let pictureMesh7= new THREE.Mesh(pm7geometry, pm7material)
 pictureMesh7.position.set(-5,-7.5,0)
 pictureMesh7.rotation.y = -Math.PI/2
 pictureMesh7.rotation.x = -Math.PI * 8/180
+pictureMesh7.frustumCulled = false
 scene.add(pictureMesh7)
 carouselGroup.add(pictureMesh7)
 
 // Picture Parameters
-const PHgeometry = new THREE.PlaneGeometry(parameters.mapWidthFactor * 0.05, parameters.mapHeightFactor * 0.05, planeSize.mapWidth, planeSize.mapHeight)
-const PHCount = PHgeometry.attributes.position.count
-const PHRandoms = new Float32Array(PHCount)
-
-const randomize = () => {
-    for (let i = 0; i < PHCount; i++) {
-        if ((i+1)%(planeSize.mapWidth + 1) == 0) {
-            PHRandoms[i] = (Math.random()) * parameters.amplitudeFactor * Math.random()
-        }
-        else {
-            PHRandoms[i] = PHRandoms[i+1]
-        } 
-    }  
-    
-    PHgeometry.setAttribute('aRandom', new THREE.BufferAttribute(PHRandoms, 1))
-}
-
-const runRandomize = () => {
-    randomize()
-    setTimeout(() => {
-        runRandomize()
-    }, 50/parameters.speedFactor)
-}
-
-runRandomize()
+const pm8geometry = new THREE.PlaneGeometry(parameters.wideWidthFactor * 0.5, parameters.wideHeightFactor * 0.5, planeSize.wideWidth, planeSize.wideHeight)
 
 // Material
-const PHmaterial = new THREE.RawShaderMaterial({
+const pm8material = new THREE.RawShaderMaterial({
     vertexShader: testVertexShader,
     fragmentShader: testFragmentShader,
     uniforms: {
         uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
         uTime: {value: 0},
         uOscillationFrequency: {value: 5},
-        uColor: {value: new THREE.Color('#aa00ff')},
+        uColor: {value: new THREE.Color('#ffffff')},
+        uTexture: { value: textures[6] },
+        uAmplitude: {value: waveClickParameters.waveAmplitude},
+        uRotationX: {value: 0},
+        uRotationZ: {value: -1},
+    },
+    side: THREE.DoubleSide
+})
+
+// Picture Mesh 8
+let pictureMesh8= new THREE.Mesh(pm8geometry, pm8material)
+pictureMesh8.position.set(0,-9,-5)
+pictureMesh8.rotation.y = Math.PI
+pictureMesh8.rotation.z = Math.PI * 8/180
+pictureMesh8.frustumCulled = false
+scene.add(pictureMesh8)
+carouselGroup.add(pictureMesh8)
+
+// Picture Parameters
+const pm9geometry = new THREE.PlaneGeometry(parameters.wideWidthFactor * 0.5, parameters.wideHeightFactor * 0.5, planeSize.wideWidth, planeSize.wideHeight)
+
+// Material
+const pm9material = new THREE.RawShaderMaterial({
+    vertexShader: testVertexShader,
+    fragmentShader: testFragmentShader,
+    uniforms: {
+        uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
+        uTime: {value: 0},
+        uOscillationFrequency: {value: 5},
+        uColor: {value: new THREE.Color('#ffffff')},
+        uTexture: { value: textures[7] },
+        uAmplitude: {value: waveClickParameters.waveAmplitude},
+        uRotationX: {value: 1},
+        uRotationZ: {value: 0},
+    },
+    side: THREE.DoubleSide
+})
+
+// Picture Mesh 5
+let pictureMesh9= new THREE.Mesh(pm9geometry, pm9material)
+pictureMesh9.position.set(5,-10.5,0)
+pictureMesh9.rotation.y = Math.PI/2
+pictureMesh9.rotation.x = Math.PI * 8/180
+pictureMesh9.frustumCulled = false
+scene.add(pictureMesh9)
+carouselGroup.add(pictureMesh9)
+
+// Picture Parameters
+const PHgeometry = new THREE.PlaneGeometry(parameters.mapWidthFactor * 0.05, parameters.mapHeightFactor * 0.05, planeSize.mapWidth, planeSize.mapHeight)
+const PHCount = PHgeometry.attributes.position.count
+
+// Material
+const PHmaterial = new THREE.RawShaderMaterial({
+    vertexShader: flagVertexShader,
+    fragmentShader: flagFragmentShader,
+    uniforms: {
+        uFrequency: {value: waveClickParameters.waveFrequency * 1.5},
+        uTime: {value: 0},
+        uOscillationFrequency: {value: 5},
+        uColor: {value: new THREE.Color('#345028')},
         uTexture: { value: PHMapTexture },
         uAmplitude: {value: waveClickParameters.waveAmplitude},
         uRotationX: {value: 1},
         uRotationZ: {value: 1},
     },
     side: THREE.DoubleSide,
+    transparent: true,
     // wireframe: true
 })
 
-// Picture Mesh 6
+// PH Map
 let PHMap= new THREE.Mesh(PHgeometry, PHmaterial)
 PHMap.position.set(10,-2.5,-30)
 scene.add(PHMap)
 
+// // Sea
+// // Geometry
+// const seaParameters = {
+//     widthFactor: 150,
+//     heightFactor: 150,
+//     amplitudeFactor: 0.3,
+//     speedFactor: 5
+// }
+
+// const seaPlaneSize = {
+//     width: 16*parameters.widthFactor,
+//     height: 16*parameters.heightFactor
+// }
+
+// const seaGeometry = new THREE.PlaneGeometry(seaParameters.widthFactor, seaParameters.heightFactor, seaPlaneSize.width, seaPlaneSize.height)
+
+// const seaCount = seaGeometry.attributes.position.count
+// const seaRandoms = new Float32Array(count)
+
+// const randomize = () => {
+//     for (let i = 0; i < seaCount; i++) {
+//         seaRandoms[i] = (Math.random()) * seaParameters.amplitudeFactor * Math.random()
+//     }  
+    
+//     seaGeometry.setAttribute('aRandom', new THREE.BufferAttribute(seaRandoms, 1))
+// }
+
+// const runRandomize = () => {
+//     randomize()
+//     setTimeout(() => {
+//         runRandomize()
+//     }, 50/seaParameters.speedFactor)
+// }
+
+// runRandomize()
+
+// // Material
+// const seaMaterial = new THREE.RawShaderMaterial({
+//     vertexShader: seaVertexShader,
+//     fragmentShader: seaFragmentShader,
+//     uniforms: {
+//         uFrequency: {value: new Vector2(5, 3)},
+//         uTime: {value: 0},
+//         uOscillationFrequency: {value: 5},
+//         uColor: {value: new THREE.Color('#001a33')},
+//         uRotationX: {value: 0},
+//         uRotationZ: {value: 1},
+//         uUpdate: {value: 1},
+//         uResolution: {value: new THREE.Vector2() },
+//     },
+//     // wireframe: true,
+//     transparent: true
+// })
+
+
+// // Mesh
+// let seaMesh = new THREE.Mesh(seaGeometry, seaMaterial)
+// seaMesh.position.z = -50
+// scene.add(seaMesh)
+
 // Arrays
-const pictureMaterials = [pm2material, pm3material, pm4material, pm5material, pm6material, pm7material]
-const pictureGeometries = [pm2geometry, pm3geometry, pm4geometry, pm5geometry, pm6geometry, pm7geometry]
-const pictureMeshes = [pictureMesh2, pictureMesh3, pictureMesh4, pictureMesh5, pictureMesh6, pictureMesh7]
-const meshRotations = [pictureMesh2.rotation, pictureMesh3.rotation, pictureMesh4.rotation, pictureMesh5.rotation, pictureMesh6.rotation, pictureMesh7.rotation]
-const pictureCLickDivs = ['#pm2Click', '#pm3Click', '#pm4Click', '#pm5Click', '#pm6Click', '#pm7Click']
+const pictureMaterials = [pm2material, pm3material, pm4material, pm5material, pm6material, pm7material, pm8material, pm9material]
+const pictureGeometries = [pm2geometry, pm3geometry, pm4geometry, pm5geometry, pm6geometry, pm7geometry, pm8geometry, pm9geometry]
+const pictureMeshes = [pictureMesh2, pictureMesh3, pictureMesh4, pictureMesh5, pictureMesh6, pictureMesh7, pictureMesh8, pictureMesh9]
+const meshRotations = [pictureMesh2.rotation, pictureMesh3.rotation, pictureMesh4.rotation, pictureMesh5.rotation, pictureMesh6.rotation, pictureMesh7.rotation, pictureMesh8.rotation, pictureMesh9.rotation]
+const pictureCLickDivs = ['#pm2Click', '#pm3Click', '#pm4Click', '#pm5Click', '#pm6Click', '#pm7Click', '#pm8Click', '#pm9Click']
 
 // Converters
 const vhValue = (coef) => {
@@ -514,6 +625,8 @@ curveMesh(2)
 curveMesh(3)
 curveMesh(4)
 curveMesh(5)
+curveMesh(6)
+curveMesh(7)
 
 /**
  * Renderer
@@ -531,12 +644,16 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.toneMapping = THREE.CineonToneMapping
 
+// seaMaterial.uniforms.uResolution.value.x = renderer.domElement.width;
+// seaMaterial.uniforms.uResolution.value.y = renderer.domElement.height;
+
 // Parallax Camera Group
 const cameraGroup = new THREE.Group
 cameraGroup.add(camera)
 cameraGroup.position.set(0,0,0)
 scene.add(cameraGroup)
 cameraGroup.add(PHMap)
+// cameraGroup.add(seaMesh)
 
 // Mouse
 const mouse = new THREE.Vector2()
@@ -747,6 +864,38 @@ document.querySelector('#pm7Click').addEventListener('click', () => {
     }
 })
 
+document.querySelector('#pm8Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm8material)
+        if (carouselRemoved == false) {
+            removeCarousel(6)
+        }
+        else {
+            addCarousel(6)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
+
+document.querySelector('#pm9Click').addEventListener('click', () => {
+    if (noClicks == false) {
+        waveUpAnimation(pm9material)
+        if (carouselRemoved == false) {
+            removeCarousel(7)
+        }
+        else {
+            addCarousel(7)
+        }
+        noClicks = true
+        setTimeout(() => {
+            noClicks = false
+        }, 1250)
+    }
+})
+
 // Cursor Animations
 let cursorState = 'EYES'
 document.querySelectorAll('.pictureClickDiv').forEach((e) => {
@@ -788,6 +937,10 @@ const tick = () =>
     pm5material.uniforms.uTime.value = elapsedTime
     pm6material.uniforms.uTime.value = elapsedTime
     pm7material.uniforms.uTime.value = elapsedTime
+    pm8material.uniforms.uTime.value = elapsedTime
+    pm9material.uniforms.uTime.value = elapsedTime
+    PHmaterial.uniforms.uTime.value = elapsedTime
+    // seaMaterial.uniforms.uTime.value = elapsedTime
 
     // Camera Parallax
     const parallaxY = - mouse.y * 0.05 
@@ -811,6 +964,7 @@ const tick = () =>
 tick()
 
 // Sets
+gsap.set(carouselGroup.position, {y: carouselGroup.position.y - 1.5 - 10})
 
 // Scroll Triggers
 
@@ -820,10 +974,22 @@ gsap.to(cameraGroup.rotation , {
     scrollTrigger: {
         trigger: '.sections',
         start: 'top top',
-        end: vhValue(800),
+        end: '100%',
+        snap: 1/8,
         scrub: true,
-        snap: 1/8
     },
     y: - Math.PI*4,
+    ease: 'none',
+})
+
+gsap.to(carouselGroup.position , {
+    scrollTrigger: {
+        trigger: '.greetingsDiv',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+        snap: 1,
+    },
+    y: -1.5,
     ease: 'none',
 })
