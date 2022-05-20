@@ -160,27 +160,20 @@ gltfLoader.load(
     }
 )
 
-cameraBase.rotation.y = Math.PI*1
-cameraOtherLens.rotation.y = Math.PI*1
-cameraFocus.rotation.y = Math.PI*1
-cameraZoom.rotation.y = Math.PI*1
-cameraOuterLens.rotation.y = Math.PI*1
-
-cameraBase.rotation.x = - Math.PI/2
-cameraOtherLens.rotation.x = - Math.PI/2
-cameraFocus.rotation.x = - Math.PI/2
-cameraZoom.rotation.x = - Math.PI/2
-cameraOuterLens.rotation.x = - Math.PI/2
-
-gsap.to(cameraOuterLens.position, {z: 0.25})
 gsap.to(cameraOuterLens.rotation, {z: Math.PI/2})
+
+// scene.add(cameraBase)
+// scene.add(cameraOtherLens)
+// scene.add(cameraFocus)
+// scene.add(cameraZoom)
+// scene.add(cameraOuterLens)
 
 cameraModel.add(cameraBase)
 cameraModel.add(cameraOtherLens)
 cameraModel.add(cameraFocus)
 cameraModel.add(cameraZoom)
 cameraModel.add(cameraOuterLens)
-cameraModel.rotation.set(0, Math.PI/2, 0)
+cameraModel.rotation.set(Math.PI/2, 0, Math.PI/2)
 cameraModel.position.set(0,-20,0)
 scene.add(cameraModel)
 
@@ -194,7 +187,7 @@ const rotateCameraZoom = () => {
         -1
     }
     const mainRot = (Math.PI/2 + (Math.random() - 0.5)*Math.PI/2) * CorCCW
-    const OLdz = (mainRot)/(Math.PI*1.5) * 0.25
+    const OLdz = (mainRot)/(Math.PI*1.5) * 1 - 0.4
     gsap.to(cameraZoom.rotation, {duration: 2, z: mainRot})
     gsap.to(cameraOuterLens.rotation, {duration: 2, z: -mainRot})
     gsap.to(cameraOuterLens.position, {duration: 2, z: OLdz})
