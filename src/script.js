@@ -197,7 +197,7 @@ const rotateCameraZoom = () => {
     const OLdz = (mainRot)/(Math.PI*1.5) * 0.25
     gsap.to(cameraZoom.rotation, {duration: 2, z: mainRot})
     gsap.to(cameraOuterLens.rotation, {duration: 2, z: -mainRot})
-    gsap.to(cameraOuterLens.position, {duration: 2, y: OLdz})
+    gsap.to(cameraOuterLens.position, {duration: 2, z: OLdz})
     setTimeout(() => {
         rotateCameraZoom()
     }, 2000)
