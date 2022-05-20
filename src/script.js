@@ -56,7 +56,7 @@ const loadingManager = new THREE.LoadingManager(
 const textures = []
 
 // Texture loader
-const textureLoader = new THREE.TextureLoader()
+const textureLoader = new THREE.TextureLoader(loadingManager)
 textures[0] = textureLoader.load('./images/1.jpg')
 textures[1] = textureLoader.load('./images/2.jpg')
 textures[2] = textureLoader.load('./images/5.jpg')
