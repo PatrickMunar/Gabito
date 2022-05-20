@@ -350,6 +350,7 @@ background: #345028;
     pointer-events: none;
     opacity: 0;
     text-align: center;
+    font-family: 'Permanent Marker', cursive;
 }
 
 .quote {
@@ -512,6 +513,7 @@ background: #345028;
     pointer-events: none;
     opacity: 0;
     text-align: center;
+    font-family: 'Permanent Marker', cursive;
 }
 
 .link {
