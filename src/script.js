@@ -21,6 +21,7 @@ window.history.scrollRestoration = 'manual'
 /**
  * Base
  */
+// Site States
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -887,11 +888,19 @@ window.addEventListener('mousemove', (event) =>
     gsap.to('.cursorFollower', {x: event.clientX - adjustFactor, y: event.clientY - adjustFactor})
 })
 
-window.addEventListener('scroll', () => {
+let scrollTimer = null
+window.addEventListener('scroll', (e) => {
+    isScrolling = true
     scrollY = window.scrollY
     scrollX = window.scrollX
     gsap.to('.cursorFollower', {y: cursorY})
-})
+    if(scrollTimer !== null) {
+        clearTimeout(scrollTimer)   
+    }
+    scrollTimer = setTimeout(() => {
+        isScrolling = false
+    }, 400)
+}, false)
 
 
 // Raycasting Click
@@ -981,8 +990,10 @@ const addCarousel = (x) => {
 
 gsap.to('.pictureClickDiv', {transform: 'rotateZ(-8deg)'})
 
+let isScrolling = false
+
 document.querySelector('#pm2Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm2material)
         if (carouselRemoved == false) {
             removeCarousel(0)
@@ -1002,7 +1013,7 @@ document.querySelector('#pm2Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm3Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm3material)
         if (carouselRemoved == false) {
             removeCarousel(1)
@@ -1022,7 +1033,7 @@ document.querySelector('#pm3Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm4Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm4material)
         if (carouselRemoved == false) {
             removeCarousel(2)
@@ -1042,7 +1053,7 @@ document.querySelector('#pm4Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm5Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm5material)
         if (carouselRemoved == false) {
             removeCarousel(3)
@@ -1062,7 +1073,7 @@ document.querySelector('#pm5Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm6Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm6material)
         if (carouselRemoved == false) {
             removeCarousel(4)
@@ -1082,7 +1093,7 @@ document.querySelector('#pm6Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm7Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm7material)
         if (carouselRemoved == false) {
             removeCarousel(5)
@@ -1102,7 +1113,7 @@ document.querySelector('#pm7Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm8Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm8material)
         if (carouselRemoved == false) {
             removeCarousel(6)
@@ -1122,7 +1133,7 @@ document.querySelector('#pm8Click').addEventListener('click', () => {
 })
 
 document.querySelector('#pm9Click').addEventListener('click', () => {
-    if (noClicks == false) {
+    if (noClicks == false && isScrolling == false) {
         waveUpAnimation(pm9material)
         if (carouselRemoved == false) {
             removeCarousel(7)
@@ -1166,12 +1177,15 @@ document.querySelectorAll('.pictureClickDiv').forEach((e) => {
  * Animate
  */
 const clock = new THREE.Clock()
+let siteState = 'GREETINGS'
+let specialAnimations = false
 
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
     const parallaxTime = elapsedTime
 
+    // Leaves
     for (let i = 0; i < leaves.length; i++) {
         leaves[i].rotation.z += Math.random()*0.01
         leaves[i].rotation.y += Math.random()*0.01
@@ -1179,6 +1193,23 @@ const tick = () =>
     }
 
     leavesGroup.rotation.y = elapsedTime * 0.1
+
+    // Site State
+    if (scrollY < window.innerHeight) {
+        siteState = 'GREETINGS'
+    }
+    else if  (scrollY >= window.innerHeight && scrollY < window.innerHeight*10) {
+        siteState = 'GALLERY'
+    }
+    else {
+        siteState = 'GOODBYE'
+    }
+
+    // Camera Model Parallax
+    if (siteState == 'GOODBYE' && isScrolling == false && specialAnimations == false) {
+        cameraModel.rotation.z += Math.sin(elapsedTime) * 0.001
+        cameraModel.rotation.x += Math.cos(elapsedTime) * 0.0005
+    }
 
     // Camera Scroll
     camera.position.y = -scrollY / sizes.height * sectionDistance
@@ -1215,6 +1246,20 @@ const tick = () =>
 }
 
 tick()
+
+// Click Events
+window.addEventListener('click', () => {
+    if (siteState == 'GOODBYE' && specialAnimations == false) {
+        specialAnimations = true
+        gsap.fromTo(cameraModel.rotation, {y: cameraModel.rotation.y}, {duration: 1.5, y: cameraModel.rotation.y + Math.PI*2})
+        scrollDisabled = true
+        setTimeout(() => {
+            specialAnimations = false
+            scrollDisabled = false
+        }, 2000)
+    }
+})
+
 
 // Sets
 gsap.to(carouselGroup.position, {y: -11.5})
@@ -1321,12 +1366,14 @@ gsap.to('#loadingBar2' , {
 const greetingsNav = document.querySelector('#greetingsNav')
 greetingsNav.addEventListener('click', () => {
     if (scrollDisabled == false) {
-        gsap.to(window, {duration: 1, scrollTo: 0})
+        gsap.to(window, {duration: 2, scrollTo: 0})
+        siteState = 'GREETINGS'
     }
 })
 
 greetingsNav.addEventListener(('mouseenter'), () => {
     if (scrollDisabled == false) {
+        specialAnimations = true
         greetingsNav.style.cursor = 'pointer'
         adjustFactor = 50
         gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
@@ -1338,6 +1385,7 @@ greetingsNav.addEventListener(('mouseenter'), () => {
 })
 greetingsNav.addEventListener(('mouseleave'), () => {
     if (scrollDisabled == false) {
+        specialAnimations = false
         adjustFactor = 25
         gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
         gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
@@ -1347,12 +1395,14 @@ greetingsNav.addEventListener(('mouseleave'), () => {
 const galleryNav = document.querySelector('#galleryNav')
 galleryNav.addEventListener('click', () => {
     if (scrollDisabled == false) {
-        gsap.to(window, {duration: 1, scrollTo: window.innerHeight})
+        gsap.to(window, {duration: 2, scrollTo: window.innerHeight})
+        siteState = 'GALLERY'
     }
 })
 
 galleryNav.addEventListener(('mouseenter'), () => {
     if (scrollDisabled == false) {
+        specialAnimations = true
         galleryNav.style.cursor = 'pointer'
         adjustFactor = 50
         gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
@@ -1364,6 +1414,7 @@ galleryNav.addEventListener(('mouseenter'), () => {
 })
 galleryNav.addEventListener(('mouseleave'), () => {
     if (scrollDisabled == false) {
+        specialAnimations = false
         adjustFactor = 25
         gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
         gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
@@ -1373,12 +1424,14 @@ galleryNav.addEventListener(('mouseleave'), () => {
 const goodbyeNav = document.querySelector('#goodbyeNav')
 goodbyeNav.addEventListener('click', () => {
     if (scrollDisabled == false) {
-        gsap.to(window, {duration: 1, scrollTo: window.innerHeight*9})
+        gsap.to(window, {duration: 2, scrollTo: window.innerHeight*9})
+        siteState = 'GOODBYE'
     }
 })
 
 goodbyeNav.addEventListener(('mouseenter'), () => {
     if (scrollDisabled == false) {
+        specialAnimations = true
         goodbyeNav.style.cursor = 'pointer'
         adjustFactor = 50
         gsap.to('.cursorFollower', {duration: 0.5, width: '100px', height: '100px'})
@@ -1390,6 +1443,7 @@ goodbyeNav.addEventListener(('mouseenter'), () => {
 })
 goodbyeNav.addEventListener(('mouseleave'), () => {
     if (scrollDisabled == false) {
+        specialAnimations = false
         adjustFactor = 25
         gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
         gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
