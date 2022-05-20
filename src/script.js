@@ -1263,6 +1263,36 @@ gsap.fromTo(carouselGroup.position , {y: -1.5}, {
     ease: 'none',
 })
 
+gsap.to(cameraModel.rotation ,{
+    scrollTrigger: {
+        trigger: '.goodbyeDiv',
+        start: 'center bottom',
+        end: 'bottom bottom',
+        scrub: true,
+        snap: 1,
+        // markers: true
+    },
+    y: -Math.PI*0.25,
+    z: -Math.PI*0.25,
+    x: -Math.PI*0.125,
+    ease: 'none',
+})
+
+gsap.fromTo(cameraModel.position , {y: -20}, {
+    scrollTrigger: {
+        trigger: '.goodbyeDiv',
+        start: 'top bottom',
+        end: 'bottom bottom',
+        scrub: true,
+        snap: 1,
+        // markers: true
+    },
+    y: -12.5,
+    x: -10,
+    z: 8.5,
+    ease: 'none',
+})
+
 gsap.to('#loadingBar1' , {
     scrollTrigger: {
         trigger: '.greetingsDiv',
