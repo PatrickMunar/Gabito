@@ -42,8 +42,8 @@ const loadingManager = new THREE.LoadingManager(
     },
     // Progress
     (itemUrl, itemsLoaded, itemsTotal) => {
-        const progressRatio = itemsLoaded/itemsTotal
-        loadingBar.style.transform = 'scaleX(' + progressRatio + ')'
+        // const progressRatio = itemsLoaded/itemsTotal
+        // loadingBar.style.transform = 'scaleX(' + progressRatio + ')'
     }
 )
 
@@ -70,32 +70,175 @@ dracoLoader.setDecoderPath('draco/')
 const gltfLoader = new GLTFLoader(loadingManager)
 gltfLoader.setDRACOLoader(dracoLoader)
 
+// Load GLTF
+const cameraBase = new THREE.Group
+const cameraOtherLens = new THREE.Group
+const cameraFocus = new THREE.Group
+const cameraZoom = new THREE.Group
+const cameraOuterLens = new THREE.Group
+const cameraModel = new THREE.Group
+
+gltfLoader.load(
+    'CameraBase.glb',
+    (obj) => {
+       
+        scene.add(obj.scene)
+             obj.scene.scale.set(0.09, 0.09, 0.09)
+
+        cameraBase.add(obj.scene)
+        obj.scene.castShadow = true
+        obj.scene.children[0].children[0].castShadow = true
+        obj.scene.children[0].children[0].receiveShadow = true
+        obj.scene.children[0].children[0].frustumCulled = false
+        obj.scene.children[0].children[1].castShadow = true
+        obj.scene.children[0].children[1].receiveShadow = true
+        obj.scene.children[0].children[1].frustumCulled = false
+
+    }
+)
+
+gltfLoader.load(
+    'CameraOtherLens.glb',
+    (obj) => {
+       
+        scene.add(obj.scene)
+             obj.scene.scale.set(0.09, 0.09, 0.09)
+
+        cameraOtherLens.add(obj.scene)
+        obj.scene.castShadow = true
+        obj.scene.children[0].castShadow = true
+        obj.scene.children[0].receiveShadow = true
+        obj.scene.children[0].frustumCulled = false
+    }
+)
+
+gltfLoader.load(
+    'CameraFocus.glb',
+    (obj) => {
+       
+        scene.add(obj.scene)
+             obj.scene.scale.set(0.09, 0.09, 0.09)
+
+        cameraFocus.add(obj.scene)
+        obj.scene.castShadow = true
+        obj.scene.children[0].castShadow = true
+        obj.scene.children[0].receiveShadow = true 
+        obj.scene.children[0].frustumCulled = false
+    }
+)
+
+gltfLoader.load(
+    'CameraZoom.glb',
+    (obj) => {
+       
+        scene.add(obj.scene)
+             obj.scene.scale.set(0.09, 0.09, 0.09)
+
+        cameraZoom.add(obj.scene)
+        obj.scene.castShadow = true
+        obj.scene.children[0].castShadow = true
+        obj.scene.children[0].receiveShadow = true
+        obj.scene.children[0].frustumCulled = false
+    }
+)
+
+gltfLoader.load(
+    'CameraOuterLens.glb',
+    (obj) => {
+       
+        scene.add(obj.scene)
+             obj.scene.scale.set(0.09, 0.09, 0.09)
+
+        cameraOuterLens.add(obj.scene)
+        obj.scene.castShadow = true
+        obj.scene.children[0].children[0].castShadow = true
+        obj.scene.children[0].children[0].receiveShadow = true
+        obj.scene.children[0].children[0].frustumCulled = false
+        obj.scene.children[0].children[1].castShadow = true
+        obj.scene.children[0].children[1].receiveShadow = true
+        obj.scene.children[0].children[1].frustumCulled = false
+    }
+)
+
+cameraBase.rotation.y = Math.PI*1
+cameraOtherLens.rotation.y = Math.PI*1
+cameraFocus.rotation.y = Math.PI*1
+cameraZoom.rotation.y = Math.PI*1
+cameraOuterLens.rotation.y = Math.PI*1
+
+cameraBase.rotation.x = - Math.PI/2
+cameraOtherLens.rotation.x = - Math.PI/2
+cameraFocus.rotation.x = - Math.PI/2
+cameraZoom.rotation.x = - Math.PI/2
+cameraOuterLens.rotation.x = - Math.PI/2
+
+gsap.to(cameraOuterLens.position, {z: 0.25})
+gsap.to(cameraOuterLens.rotation, {z: Math.PI/2})
+
+cameraModel.add(cameraBase)
+cameraModel.add(cameraOtherLens)
+cameraModel.add(cameraFocus)
+cameraModel.add(cameraZoom)
+cameraModel.add(cameraOuterLens)
+cameraModel.rotation.set(0, Math.PI/2, 0)
+cameraModel.position.set(0,-20,0)
+scene.add(cameraModel)
+
+let CorCCW = -1
+
+const rotateCameraZoom = () => {
+    if (CorCCW == -1){
+        CorCCW = 1
+    }
+    else {
+        -1
+    }
+    const mainRot = (Math.PI/2 + (Math.random() - 0.5)*Math.PI/2) * CorCCW
+    const OLdz = (mainRot)/(Math.PI*1.5) * 0.25
+    gsap.to(cameraZoom.rotation, {duration: 2, z: mainRot})
+    gsap.to(cameraOuterLens.rotation, {duration: 2, z: -mainRot})
+    gsap.to(cameraOuterLens.position, {duration: 2, y: OLdz})
+    setTimeout(() => {
+        rotateCameraZoom()
+    }, 2000)
+} 
+
+const rotateCameraFocus = () => {
+    if (CorCCW == -1){
+        CorCCW = 1
+    }
+    else {
+        -1
+    }
+    const time = Math.random()*3 + 0.5 
+    const STtime = time * 1000
+    const mainRot = (Math.PI + (Math.random() - 0.5)*Math.PI) * CorCCW
+    gsap.to(cameraFocus.rotation, {duration: Math.random()*3 + 0.5 , z: mainRot})
+    setTimeout(() => {
+        rotateCameraFocus()
+    }, STtime)
+} 
+
+rotateCameraZoom()
+rotateCameraFocus()
+
 // Font Loader
 const fontLoader = new FontLoader()
-fontLoader.load('./fonts/Simpsonfont.ttf')
-
-// gltfLoader.load(
-//     'Bed.glb',
-//     (obj) => {
-       
-//         scene.add(obj.scene)
-//         obj.scene.scale.set(0.05,0.05,0.05)
-
-//         // 
-//         topBedframeGroup.add(obj.scene)
-//         obj.scene.children[0].castShadow = true
-//         obj.scene.children[0].receiveShadow = true
-//     }
-// )
 
 // Lighting
-
-const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
 scene.add(ambientLight)
 
 const pointLight = new THREE.PointLight(0xffffff, 1)
-pointLight.position.set(10,-10,10)
+pointLight.position.set(0, 10, 20)
 scene.add(pointLight)
+
+pointLight.castShadow = true
+pointLight.shadow.mapSize.x = 1024*4
+pointLight.shadow.mapSize.y = 1024*4
+pointLight.shadow.camera.near = 5
+pointLight.shadow.camera.far = 50
+pointLight.shadow.normalBias = 0.05
 
 /**
  * Sizes
@@ -656,6 +799,7 @@ cameraGroup.add(camera)
 cameraGroup.position.set(0,0,0)
 scene.add(cameraGroup)
 cameraGroup.add(PHMap)
+cameraGroup.add(pointLight)
 // cameraGroup.add(seaMesh)
 
 // // Particles
@@ -1073,7 +1217,7 @@ const tick = () =>
     // Call tick again on the next frame
     // setTimeout(() => {
     //     window.requestAnimationFrame(tick)
-    //   }, 1000 / 240)
+    //   }, 1000 / 500)
     window.requestAnimationFrame(tick)  
 }
 
