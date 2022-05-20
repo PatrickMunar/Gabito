@@ -39,7 +39,12 @@ const loadingPage = document.getElementById('loadingPage')
 const loadingManager = new THREE.LoadingManager(
     // Loaded
     () => {
-       
+        setTimeout(() => {
+            quoteAnimations()
+        }, 1000)
+        setTimeout(() => {
+            enlargeViewFinder()
+        }, 4000)
     },
     // Progress
     (itemUrl, itemsLoaded, itemsTotal) => {
@@ -1179,6 +1184,7 @@ document.querySelectorAll('.pictureClickDiv').forEach((e) => {
 const clock = new THREE.Clock()
 let siteState = 'GREETINGS'
 let specialAnimations = false
+let isViewFinderAnimation2Done = false
 
 const tick = () =>
 {
@@ -1203,6 +1209,11 @@ const tick = () =>
     }
     else {
         siteState = 'GOODBYE'
+        if (isViewFinderAnimation2Done == false) {
+            setTimeout(() => {
+                enlargeViewFinder2()
+            }, 2000)
+        }
     }
 
     // Camera Model Parallax
@@ -1449,3 +1460,63 @@ goodbyeNav.addEventListener(('mouseleave'), () => {
         gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
     }
 })
+
+// viewFinder
+const viewFinder = document.querySelector('.viewFinder')
+
+let isViewFinderAnimationDone = false
+
+viewFinder.addEventListener('mouseenter', () => {
+    if (isViewFinderAnimationDone == true) {
+        gsap.to('.viewFinder', {duration: 0.5, transform: 'scale(1.025)'})
+    }
+})
+
+viewFinder.addEventListener('mouseleave', () => {
+    if (isViewFinderAnimationDone == true) {
+        gsap.to('.viewFinder', {duration: 0.5, transform: 'scale(1)'})
+    }
+})
+
+const viewFinder2 = document.querySelector('.viewFinder2')
+
+viewFinder2.addEventListener('mouseenter', () => {
+    if (isViewFinderAnimation2Done == true) {
+        gsap.to('.viewFinder2', {duration: 0.5, transform: 'scale(1.025)'})
+    }
+})
+
+viewFinder2.addEventListener('mouseleave', () => {
+    if (isViewFinderAnimation2Done == true) {
+        gsap.to('.viewFinder2', {duration: 0.5, transform: 'scale(1)'})
+    }
+})
+
+const enlargeViewFinder = () => {
+    gsap.to('.viewFinder', {duration: 0.5, transform: 'scale(1)'})
+    gsap.to('.viewFinderCoverText', {duration: 0.5, opacity: 0})
+    gsap.to('.viewFinderActualText', {duration: 0.5, opacity: 1})
+    setTimeout(() => {
+        isViewFinderAnimationDone = true
+    }, 500)
+}
+
+gsap.to('.nature', {x: -30})
+const quoteAnimations = () => {
+    gsap.to('.midDash', {duration: 1.5, transform: 'scaleX(1)', ease: 'none'})
+    setTimeout(() => {
+        gsap.to('.dash', {duration: 1, transform: 'scaleX(1)', ease: 'Power1.easeOut'})
+        setTimeout(() => {
+            gsap.to('.nature', {duration: 0.75, opacity: 1, x: 0})
+        }, 700)
+    }, 1500)
+}
+
+const enlargeViewFinder2 = () => {
+    gsap.to('.viewFinder2', {duration: 0.5, transform: 'scale(1)'})
+    gsap.to('.viewFinderCoverText2', {duration: 0.2, opacity: 0})
+    gsap.to('.viewFinderActualText2', {duration: 0.5, delay: 0.25, opacity: 1})
+    setTimeout(() => {
+        isViewFinderAnimation2Done = true
+    }, 500)
+}
