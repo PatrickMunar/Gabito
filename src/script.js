@@ -1238,8 +1238,9 @@ const tick = () =>
     // seaMaterial.uniforms.uTime.value = elapsedTime
 
     // Camera Parallax
-    const parallaxY = - mouse.y * 0.05 
+    const parallaxY = mouse.y * 0.05 
     cameraGroup.position.y += ( parallaxY - cameraGroup.position.y )
+
 
     // Update controls
     if (controls.enabled == true) {
@@ -1494,7 +1495,7 @@ viewFinder2.addEventListener('mouseleave', () => {
 
 const enlargeViewFinder = () => {
     gsap.to('.viewFinder', {duration: 0.5, transform: 'scale(1)'})
-    gsap.to('.viewFinderCoverText', {duration: 0.5, opacity: 0})
+    gsap.to('.viewFinderCoverText', {duration: 0.2, opacity: 0})
     gsap.to('.viewFinderActualText', {duration: 0.5, opacity: 1})
     setTimeout(() => {
         isViewFinderAnimationDone = true
