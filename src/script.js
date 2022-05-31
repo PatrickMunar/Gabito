@@ -1374,6 +1374,10 @@ gsap.to('#loadingBar2' , {
     ease: 'none',
 })
 
+if (ScrollTrigger.isScrolling()) {
+    console.log('scrolling')
+}
+
 // Nav Site State
 const greetingsNav = document.querySelector('#greetingsNav')
 greetingsNav.addEventListener('click', () => {

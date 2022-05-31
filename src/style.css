@@ -54,6 +54,7 @@ body {
     position: absolute;
     width: 100vw;
     height: 100vh;
+    z-index: 2000;
 }
 
 .blankSlider {
@@ -299,8 +300,10 @@ background: #345028;
 }
 
 .greetingsDiv {
+    position: relative;
     width: 100vw;
     height: 100vh;
+    /* z-index: 2000; */
 }
 
 .goodbyeDiv {
