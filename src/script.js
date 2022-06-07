@@ -33,23 +33,39 @@ const scene = new THREE.Scene()
  * Loaders
  */
 // Loading Manager
-const loadingBar = document.getElementById('loadingBar')
-const loadingPage = document.getElementById('loadingPage')
+document.body.style.overflowY = 'hidden'
+document.body.style.overflowX = 'hidden'
+const loadPercent = document.querySelector('.loadPercent')
+let loadProgress = 0
+const loadingPage = document.querySelector('.loadingPage')
 
 const loadingManager = new THREE.LoadingManager(
     // Loaded
     () => {
         setTimeout(() => {
-            quoteAnimations()
-        }, 1000)
+            loadingPage.style.display = 'none'
+            window.history.scrollRestoration = 'manual'
+            document.body.style.overflowY = 'scroll'
+            document.body.style.overflowX = 'hidden'
+            setTimeout(() => {
+                quoteAnimations()
+            }, 1000)
+            setTimeout(() => {
+                enlargeViewFinder()
+            }, 4000)
+        }, 2500)
+
         setTimeout(() => {
-            enlargeViewFinder()
-        }, 4000)
+            document.querySelector('#emoji').innerText = '😀'
+        }, 1000)
     },
     // Progress
     (itemUrl, itemsLoaded, itemsTotal) => {
-        // const progressRatio = itemsLoaded/itemsTotal
-        // loadingBar.style.transform = 'scaleX(' + progressRatio + ')'
+        loadProgress = (itemsLoaded/itemsTotal)
+        gsap.to('#allDone', {x: loadProgress * window.innerWidth})
+        gsap.to('#allDoneText', {x: loadProgress * - window.innerWidth})
+        loadPercent.innerText = (loadProgress*100).toFixed(1) + ' %'
+        gsap.to(loadPercent, {fontSize: (loadProgress * 0.5) + 0.5 +'rem'})
     }
 )
 
