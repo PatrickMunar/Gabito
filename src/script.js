@@ -9,13 +9,33 @@ import testVertexShader from './shaders/vertex.glsl'
 import testFragmentShader from './shaders/fragment.glsl'
 import flagFragmentShader from './shaders/flagFragment.glsl'
 import flagVertexShader from './shaders/flagVertex.glsl'
-import seaFragmentShader from './shaders/seaFragment.glsl'
-import seaVertexShader from './shaders/seaVertex.glsl'
-import { Vector2 } from 'three'
+import Scrollbar from 'smooth-scrollbar'
 import ScrollToPlugin from "gsap/ScrollToPlugin";
 
 // Clear Scroll Memory
 window.history.scrollRestoration = 'manual'
+
+// Scroll Triggers
+gsap.registerPlugin(ScrollTrigger)
+
+// 3rd party library setup:
+const bodyScrollBar = Scrollbar.init(document.querySelector('#bodyScrollbar'), { damping: 0.1, delegateTo: document })
+
+// Tell ScrollTrigger to use these proxy getter/setter methods for the "body" element: 
+ScrollTrigger.scrollerProxy('#bodyScrollbar', {
+  scrollTop(value) {
+    if (arguments.length) {
+      bodyScrollBar.scrollTop = value; // setter
+    }
+    return bodyScrollBar.scrollTop    // getter
+  },
+  getBoundingClientRect() {
+    return {top: 0, left: 0, width: window.innerWidth, height: window.innerHeight}
+  }
+})
+
+// when the smooth scroller updates, tell ScrollTrigger to update() too: 
+bodyScrollBar.addListener(ScrollTrigger.update);
 
 // -----------------------------------------------------------------
 /**
@@ -25,6 +45,19 @@ window.history.scrollRestoration = 'manual'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
+
+// NavBar
+const navBar = document.querySelector('.navBar')
+
+// NavBar
+const cursorFollower = document.querySelector('.cursorFollower')
+
+// Fix Position
+bodyScrollBar.addListener(({ offset }) => {  
+    canvas.style.top = offset.y + 'px'
+    navBar.style.top = 'calc(' + offset.y + 'px + 0.5vw)'
+    cursorFollower.style.top = offset.y + 'px'
+})
 
 // Scene
 const scene = new THREE.Scene()
@@ -1205,7 +1238,7 @@ let isViewFinderAnimation2Done = false
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
-    const parallaxTime = elapsedTime
+    scrollY = bodyScrollBar.scrollTop
 
     // Leaves
     for (let i = 0; i < leaves.length; i++) {
@@ -1394,15 +1427,6 @@ if (ScrollTrigger.isScrolling()) {
     console.log('scrolling')
 }
 
-// Nav Site State
-const greetingsNav = document.querySelector('#greetingsNav')
-greetingsNav.addEventListener('click', () => {
-    if (scrollDisabled == false) {
-        gsap.to(window, {duration: 2, scrollTo: 0})
-        siteState = 'GREETINGS'
-    }
-})
-
 greetingsNav.addEventListener(('mouseenter'), () => {
     if (scrollDisabled == false) {
         specialAnimations = true
@@ -1424,14 +1448,6 @@ greetingsNav.addEventListener(('mouseleave'), () => {
     }
 })
 
-const galleryNav = document.querySelector('#galleryNav')
-galleryNav.addEventListener('click', () => {
-    if (scrollDisabled == false) {
-        gsap.to(window, {duration: 2, scrollTo: window.innerHeight})
-        siteState = 'GALLERY'
-    }
-})
-
 galleryNav.addEventListener(('mouseenter'), () => {
     if (scrollDisabled == false) {
         specialAnimations = true
@@ -1450,14 +1466,6 @@ galleryNav.addEventListener(('mouseleave'), () => {
         adjustFactor = 25
         gsap.to('.cursorFollower', {duration: 0.5, width: '50px', height: '50px'})
         gsap.to('.enterIcon', {duration: 0.5, opacity: 0})
-    }
-})
-
-const goodbyeNav = document.querySelector('#goodbyeNav')
-goodbyeNav.addEventListener('click', () => {
-    if (scrollDisabled == false) {
-        gsap.to(window, {duration: 2, scrollTo: window.innerHeight*9})
-        siteState = 'GOODBYE'
     }
 })
 
@@ -1540,4 +1548,19 @@ const enlargeViewFinder2 = () => {
     setTimeout(() => {
         isViewFinderAnimation2Done = true
     }, 500)
+}
+
+const sitePhases = document.querySelectorAll('.sitePhase')
+for (let i = 0; i < sitePhases.length; i++) {
+    sitePhases[i].addEventListener('click', () => {
+        if (i == 0) {
+            bodyScrollBar.scrollTo(0, 0)
+        }
+        else if (i == 1) {
+            bodyScrollBar.scrollTo(0, window.innerHeight*1)
+        }
+        else if (i == 2) {
+            bodyScrollBar.scrollTo(0, window.innerHeight*10)
+        }
+    })
 }
